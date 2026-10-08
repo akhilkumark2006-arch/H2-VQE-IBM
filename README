@@ -1,0 +1,93 @@
+# H₂ Molecule VQE & 2-Qubit Quantum Simulator
+
+A quantum computing project implementing the **Variational Quantum Eigensolver (VQE)** algorithm to estimate the ground-state energy of a Hydrogen molecule ($H_2$) on IBM Quantum hardware, alongside a custom 2-qubit classical simulator.
+
+---
+
+## 📌 Features
+
+- **Molecular Hamiltonian Construction:** Generates the electronic structure Hamiltonian for an $H_2$ molecule at a specified bond distance ($0.735 \text{ Å}$) using PySCF and Qiskit Nature.
+- **Qubit Mapping:** Uses `ParityMapper` to map second-quantized operators down to a 2-qubit system.
+- **IBM Quantum Hardware VQE:** Runs a parameterized ansatz ($\text{R}_Y(\theta_0) \otimes \text{R}_Y(\theta_1) + \text{CX}$) on real IBM Quantum backends via `QiskitRuntimeService` and `EstimatorV2`.
+- **SPSA Optimization:** Optimizes ansatz parameters iteratively using Simultaneous Perturbation Stochastic Approximation (`SPSA`).
+- **Custom Local Simulator (`Simulator.py`):** Standalone 2-qubit simulator using `qiskit-aer` for local testing of expectation values and custom Hamiltonian energy evaluation.
+
+---
+
+## 🛠️ Tech Stack & Dependencies
+
+- **Language:** Python 3.10+
+- **Quantum Framework:** [Qiskit](https://www.ibm.com/quantum/qiskit) ($\ge 1.0$)
+- **Runtime Environment:** `qiskit-ibm-runtime`
+- **Quantum Chemistry:** `qiskit-nature`, `pyscf`
+- **Algorithms:** `qiskit-algorithms`
+- **Numerical & Plotting:** `numpy`, `matplotlib`
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+Ensure you have Python installed. It is recommended to use a virtual environment:
+
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+
+### Installation
+
+Install all required dependencies:
+
+```bash
+pip install qiskit qiskit-aer qiskit-ibm-runtime qiskit-nature pyscf qiskit-algorithms matplotlib numpy
+```
+
+---
+
+## 💻 Usage
+
+### 1. Running the IBM Hardware VQE Notebook
+
+Open and run the Jupyter Notebook environment:
+
+1. Obtain your API token from [IBM Quantum Platform](https://quantum.ibm.com/).
+2. Set your environment variable or update the token in the notebook:
+   ```python
+   import os
+   os.environ["QISKIT_IBM_TOKEN"] = "YOUR_IBM_QUANTUM_TOKEN"
+   ```
+3. Execute the notebook cells to:
+   - Build the $H_2$ molecular Hamiltonian.
+   - Transpile the circuit for the least busy IBM Quantum backend.
+   - Run the SPSA optimizer to compute ground-state energy.
+   - Plot energy convergence against exact classical ground-state energy.
+
+### 2. Running the Local Simulator Script
+
+To run the standalone 2-qubit local simulation test:
+
+```bash
+python Simulator.py
+```
+
+This script will display the drawn circuit, state measurement counts, calculated expectation values ($\langle Z_0 \rangle$, $\langle Z_1 \rangle$, $\langle Z_0 Z_1 \rangle$), and the resultant Hamiltonian energy.
+
+---
+
+## 🔬 Mathematical Overview
+
+### 1. Ansatz Circuit
+The 2-qubit parameterized state is prepared as:
+$$\left|\psi(\theta_0, \theta_1)\right\rangle = \text{CNOT}_{0,1} \left( \text{R}_Y(\theta_0) \otimes \text{R}_Y(\theta_1) \right) |00\rangle$$
+
+### 2. Hamiltonian Evaluation
+Expectation values for Pauli observables are computed from z-measurement counts:
+$$\langle Z_i \rangle = \frac{N_{|0\rangle} - N_{|1\rangle}}{N_{\text{total}}}$$
+
+---
+
+## 📄 License
+
+This project is open-source and available under the [MIT License](LICENSE).
